@@ -1,0 +1,26 @@
+.item-enter {
+    opacity: 0;
+}
+.item-enter-active {
+    opacity: 1;
+    transition: opacity 500ms ease-in;
+}
+.item-exit {
+    opacity: 1;
+}
+.item-exit-active {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
+
+.register-shadow {
+    -webkit-box-shadow: 2px 2px 3px 0px rgba(166,161,166,1);
+-moz-box-shadow: 2px 2px 3px 0px rgba(166,161,166,1);
+box-shadow: 2px 2px 3px 0px rgba(166,161,166,1);
+}
+
+.register-input {
+    -webkit-box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.47);
+    -moz-box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.47);
+    box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.47);
+}
