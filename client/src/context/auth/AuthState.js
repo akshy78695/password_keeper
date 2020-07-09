@@ -3,7 +3,6 @@ import axios from "axios";
 import authReducer from "./authReducer";
 import AuthContext from "./authContext";
 import {
-    REMOVE_ALERT,
     REGISTER_SUCCESS,
     REGISTER_FAIL,
     USER_LOADED,
@@ -31,6 +30,7 @@ const AuthState = (props) => {
     // Load User
 
     const loadUser = async () => {
+        dispatch({ type: START_LOADING });
         if (localStorage.token) {
             setAuthToken(localStorage.token);
         }
@@ -38,8 +38,10 @@ const AuthState = (props) => {
             const res = await axios.get("/api/auth");
             dispatch({ type: USER_LOADED, payload: res.data });
             console.log(res.data);
+            dispatch({ type: STOP_LOADING });
         } catch (error) {
             dispatch({ type: AUTH_ERROR });
+            dispatch({ type: STOP_LOADING });
         }
     };
     // Register User
@@ -88,6 +90,9 @@ const AuthState = (props) => {
         }
     };
     // Logout user
+    const logout = () => {
+        dispatch({ type: LOGOUT });
+    };
     // clear errors
     const clearError = () => {
         dispatch({ type: CLEAR_ERROR });
@@ -104,6 +109,7 @@ const AuthState = (props) => {
                 clearError,
                 loadUser,
                 loginUser,
+                logout,
             }}
         >
             {props.children}

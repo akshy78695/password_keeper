@@ -36,8 +36,8 @@ const Register = (props) => {
         if (error === "User already exist") {
             setAlert("danger", `Email already exist`);
             clearError();
-            // eslint-disable-next-line
         }
+        // eslint-disable-next-line
     }, [error, isAuthenticated, props.history]);
     const onChange = (e) => {
         setUser({ ...user, [e.target.name]: e.target.value });
