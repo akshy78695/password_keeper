@@ -29,11 +29,11 @@ const Login = (props) => {
             props.history.push("/");
         }
         if (error === "Invalid credentials") {
-            setAlert("danger", error);
+            setAlert("warning", error);
             clearError();
         }
-        if (error === "500 server error") {
-            setAlert("danger", error);
+        if (error === "Server Error") {
+            setAlert("danger", "Something went wrong, please try again");
             clearError();
         }
         // eslint-disable-next-line
@@ -66,10 +66,6 @@ const Login = (props) => {
 
     const onPasswordShow = () => {
         setShowPassword(!showPassword);
-
-        setTimeout(() => {
-            setShowPassword(showPassword);
-        }, 1500);
     };
     return (
         <div

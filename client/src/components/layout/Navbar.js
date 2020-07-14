@@ -1,12 +1,13 @@
 import React, { useContext, Fragment } from "react";
 import { NavLink } from "react-router-dom";
 import AuthContext from "../../context/auth/authContext";
+import PasswordContext from "../../context/password/passwordContext";
 
 const Navbar = (props) => {
     const authContext = useContext(AuthContext);
-
-    const { isAuthenticated, user, logout } = authContext;
-
+    const passwordContext = useContext(PasswordContext);
+    const { isAuthenticated, token, user, logout } = authContext;
+    const { clearPasswords } = passwordContext;
     const authLinks = (
         <Fragment>
             <li
@@ -14,7 +15,9 @@ const Navbar = (props) => {
                 data-toggle="collapse"
                 data-target=".navbar-collapse.show"
             >
-                <div className="nav-link">Hey, {user && user.name}</div>
+                <div className="nav-link" style={{ font: "#f2f2f2" }}>
+                    Hey, {user && user.name}
+                </div>
             </li>
             <li
                 className="nav-item"
@@ -22,12 +25,15 @@ const Navbar = (props) => {
                 data-target=".navbar-collapse.show"
                 onClick={() => {
                     logout();
+                    clearPasswords();
                     // props.history.push("/login");
                 }}
                 style={{ cursor: "pointer" }}
             >
                 <div className="nav-link">
-                    <span className="">Logout</span>
+                    <span data-toggle="modal" data-target="#logoutModal">
+                        Logout
+                    </span>
                     <span className="align-self-middle ml-2">
                         <svg
                             width="1.5em"
@@ -108,7 +114,7 @@ const Navbar = (props) => {
             <div className="collapse navbar-collapse  " id="navbarNav">
                 <ul className="navbar-nav ml-auto">
                     {isAuthenticated === true && authLinks}
-                    {isAuthenticated === false && guestLink}
+                    {token === null && guestLink}
                 </ul>
             </div>
         </nav>

@@ -21,7 +21,7 @@ const AuthState = (props) => {
         token: localStorage.getItem("token"),
         isAuthenticated: null,
         user: null,
-        loading: false,
+        loading: null,
         error: null,
     };
 
@@ -37,10 +37,9 @@ const AuthState = (props) => {
         try {
             const res = await axios.get("/api/auth");
             dispatch({ type: USER_LOADED, payload: res.data });
-            console.log(res.data);
-            dispatch({ type: STOP_LOADING });
         } catch (error) {
             dispatch({ type: AUTH_ERROR });
+        } finally {
             dispatch({ type: STOP_LOADING });
         }
     };
@@ -54,7 +53,6 @@ const AuthState = (props) => {
         try {
             dispatch({ type: START_LOADING });
             const res = await axios.post("/api/users", formData, config);
-            console.log(res.data);
             dispatch({ type: REGISTER_SUCCESS, payload: res.data });
             // console.log(res.data);
             loadUser();

@@ -51,8 +51,8 @@ router.post(
             const resPassword = await newPassword.save();
             res.json(resPassword);
         } catch (error) {
-            console.log(error);
-            res.status(500).send("Server Error");
+            console.error(error);
+            res.status(500).json({ message: "Server Error" });
         }
     }
 );
@@ -60,16 +60,37 @@ router.post(
 // @desc        update password/s
 // @access      private
 
-router.put("/:id", (req, res) => {
-    res.send("update password");
+router.put("/:id", async (req, res) => {
+    const id = req.params.id;
+    if (!req.body) {
+        return res.status(400).json({
+            message: "Data to update can not be empty!",
+        });
+    }
+    try {
+        const updateFile = await Passwords.findByIdAndUpdate(id, req.body, {
+            new: true,
+        });
+        res.send(updateFile);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Server Error");
+    }
 });
 
 // @route       DELETE /api/pass
 // @desc        delete password/s
 // @access      private
 
-router.delete("/:id", (req, res) => {
-    res.send("delete password");
+router.delete("/:id", async (req, res) => {
+    const id = req.params.id;
+    try {
+        const deleteFile = await Passwords.findByIdAndRemove(id);
+        res.json(deleteFile);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Server Error");
+    }
 });
 
 module.exports = router;

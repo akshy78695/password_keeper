@@ -11,7 +11,7 @@ const Home = () => {
         loadUser();
         // eslint-disable-next-line
     }, []);
-    if (loading) {
+    if (loading === true || loading === null) {
         return <Loading />;
     }
     if (isAuthenticated) {

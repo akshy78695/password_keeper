@@ -1,7 +1,6 @@
 import React, { useState, useContext, Fragment, useEffect } from "react";
 import AuthContext from "../../context/auth/authContext";
 import AlertContext from "../../context/alert/alertContext";
-
 const Register = (props) => {
     const [user, setUser] = useState({
         name: "",
@@ -10,7 +9,7 @@ const Register = (props) => {
         password2: "",
     });
 
-    const [showNameAlert, setNameAlert] = useState(true);
+    const [showNameAlert, setNameAlert] = useState(false);
     const [showEmailAlert, setEmailAlert] = useState(false);
     const [showPasswordAlert, setPasswordAlert] = useState(false);
     const [showPassword2Alert, setPassword2Alert] = useState(false);
@@ -108,7 +107,7 @@ const Register = (props) => {
                             className="text-danger ml-2"
                             style={{ fontSize: "14px" }}
                         >
-                            *Please enter name
+                            *Please enter name (min. 3 characters)
                         </span>
                     )}
                 </div>

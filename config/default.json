@@ -1,5 +1,4 @@
 {
     "mongoURI": "mongodb+srv://admin:admin1234@cluster0.bustz.mongodb.net/<dbname>?retryWrites=true&w=majority",
-    "jwtSecret": "jsonwebtokensecret",
-    "useEffectWithoutDep": "// eslint-disable-next-line"
+    "jwtSecret": "jsonwebtokensecret"
 }

@@ -6,27 +6,53 @@ import {
     UPDATE_PASSWORD,
     FILTER_PASSWORD,
     CLEAR_FILTER,
+    PASSWORD_ERROR,
+    GET_PASSWORDS,
+    START_LOADING,
+    STOP_LOADING,
+    CLEAR_PASSWORDS,
+    CLEAR_ERROR,
 } from "../types";
 
 export default (state, action) => {
     switch (action.type) {
+        case GET_PASSWORDS:
+            return {
+                ...state,
+                passwords: action.payload,
+            };
         case ADD_PASSWORD:
             return {
                 ...state,
                 passwords: [action.payload, ...state.passwords],
             };
+        case CLEAR_PASSWORDS:
+            return {
+                ...state,
+                passwords: null,
+                error: null,
+                current: null,
+                filtered: null,
+            };
+        case PASSWORD_ERROR:
+            return {
+                ...state,
+                error: action.payload,
+            };
+        case CLEAR_ERROR:
+            return { ...state, error: null };
         case UPDATE_PASSWORD:
             return {
                 ...state,
                 passwords: state.passwords.map((password) =>
-                    password.id === action.payload.id
+                    password._id === action.payload._id
                         ? action.payload
                         : password
                 ),
                 filtered:
                     state.filtered &&
                     state.filtered.map((password) =>
-                        password.id === action.payload.id
+                        password._id === action.payload._id
                             ? action.payload
                             : password
                     ),
@@ -35,12 +61,12 @@ export default (state, action) => {
             return {
                 ...state,
                 passwords: state.passwords.filter(
-                    (password) => password.id !== action.payload
+                    (password) => password._id !== action.payload
                 ),
                 filtered:
                     state.filtered !== null
                         ? state.filtered.filter(
-                              (password) => password.id !== action.payload
+                              (password) => password._id !== action.payload
                           )
                         : state.filtered,
             };
@@ -58,8 +84,12 @@ export default (state, action) => {
             return {
                 ...state,
                 filtered: state.passwords.filter((password) => {
-                    const regex = new RegExp(`${action.payload}`, "gi");
-                    return password.name.match(regex);
+                    try {
+                        const regex = new RegExp(`${action.payload}`, "gi");
+                        return password.name.match(regex);
+                    } catch (error) {
+                        return password;
+                    }
                     // ||
                     // password.description.match(regex)
                 }),
@@ -68,6 +98,16 @@ export default (state, action) => {
             return {
                 ...state,
                 filtered: null,
+            };
+        case START_LOADING:
+            return {
+                ...state,
+                loading: true,
+            };
+        case STOP_LOADING:
+            return {
+                ...state,
+                loading: false,
             };
         default:
             return state;

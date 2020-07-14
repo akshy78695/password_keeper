@@ -1,63 +1,102 @@
 import React, { useReducer } from "react";
-import { v4 as uuid } from "uuid";
+import axios from "axios";
 import PasswordContext from "./passwordContext";
 import passwordReducer from "./passwordReducer";
 import {
     ADD_PASSWORD,
+    PASSWORD_ERROR,
     DELETE_PASSWORD,
     SET_CURRENT,
     CLEAR_CURRENT,
     UPDATE_PASSWORD,
     FILTER_PASSWORD,
     CLEAR_FILTER,
+    GET_PASSWORDS,
+    START_LOADING,
+    STOP_LOADING,
+    CLEAR_PASSWORDS,
+    CLEAR_ERROR,
 } from "../types";
 
 const PasswordState = (props) => {
     const initialState = {
-        passwords: [
-            {
-                id: 1,
-                name: "google",
-                password: "3dfdf9jdkfjl",
-                description: "google ka password",
-                date: "2020-07-04T08:34:47.909Z",
-            },
-            {
-                id: 2,
-                name: "github",
-                password: "asd3dfdf9jdkfjl",
-                description: "github ka password",
-                date: "2020-07-04T08:34:47.909Z",
-            },
-            {
-                id: 3,
-                name: "paytm",
-                password: "309jdkfjl",
-                description: "paytm ka password",
-                date: "2020-07-04T08:34:15.318Z",
-            },
-            {
-                id: 4,
-                name: "facebook",
-                password: "309jdkfjl",
-                description: "paytm ka password",
-                date: "2020-07-04T08:34:15.318Z",
-            },
-        ],
+        passwords: [],
         current: null,
         filtered: null,
+        error: null,
+        loading: false,
     };
 
     const [state, dispatch] = useReducer(passwordReducer, initialState);
 
-    //Add password
-    const addPassword = (newPassword) => {
-        newPassword.id = uuid();
-        dispatch({ type: ADD_PASSWORD, payload: newPassword });
+    //Get passwords
+    const getPasswords = async () => {
+        try {
+            dispatch({ type: START_LOADING });
+            const res = await axios.get("/api/pass");
+            dispatch({ type: GET_PASSWORDS, payload: res.data });
+        } catch (error) {
+            dispatch({ type: PASSWORD_ERROR });
+        } finally {
+            dispatch({ type: STOP_LOADING });
+        }
+    };
+
+    //Add passwords
+    const addPassword = async (newPassword) => {
+        const config = {
+            headers: {
+                "Context-Type": "application/json",
+            },
+        };
+        try {
+            const res = await axios.post("/api/pass", newPassword, config);
+            dispatch({ type: ADD_PASSWORD, payload: res.data });
+        } catch (error) {
+            dispatch({
+                type: PASSWORD_ERROR,
+                payload: error.response.data.message,
+            });
+        }
     };
     //delete password
-    const deletePassword = (id) => {
-        dispatch({ type: DELETE_PASSWORD, payload: id });
+    const deletePassword = async (id) => {
+        try {
+            // console.log(id);
+            await axios.delete(`/api/pass/${id}`);
+            dispatch({ type: DELETE_PASSWORD, payload: id });
+        } catch (error) {
+            dispatch({
+                type: PASSWORD_ERROR,
+                payload: error.response.data.message,
+            });
+        }
+    };
+
+    //update password
+    const updatePassword = async (password) => {
+        const config = {
+            headers: {
+                "Content-type": "application/json",
+            },
+        };
+        try {
+            const res = await axios.put(
+                `/api/pass/${password._id}`,
+                password,
+                config
+            );
+            dispatch({ type: UPDATE_PASSWORD, payload: res.data });
+        } catch (error) {
+            dispatch({
+                type: PASSWORD_ERROR,
+                payload: error.response.data.message,
+            });
+        }
+    };
+    //clear passwords
+    const clearPasswords = () => {
+        dispatch({ type: CLEAR_PASSWORDS });
     };
     //set current password
     const setCurrent = (password) => {
@@ -67,10 +106,6 @@ const PasswordState = (props) => {
     const clearCurrent = () => {
         dispatch({ type: CLEAR_CURRENT });
     };
-    //update password
-    const updatePassword = (password) => {
-        dispatch({ type: UPDATE_PASSWORD, payload: password });
-    };
     //filter passwords
     const filterPassword = (text) => {
         dispatch({ type: FILTER_PASSWORD, payload: text });
@@ -79,6 +114,10 @@ const PasswordState = (props) => {
     const clearFilter = () => {
         dispatch({ type: CLEAR_FILTER });
     };
+    //clear error
+    const clearError = () => {
+        dispatch({ type: CLEAR_ERROR });
+    };
 
     return (
         <PasswordContext.Provider
@@ -86,6 +125,9 @@ const PasswordState = (props) => {
                 passwords: state.passwords,
                 current: state.current,
                 filtered: state.filtered,
+                loading: state.loading,
+                error: state.error,
+                getPasswords,
                 addPassword,
                 deletePassword,
                 setCurrent,
@@ -93,6 +135,8 @@ const PasswordState = (props) => {
                 updatePassword,
                 filterPassword,
                 clearFilter,
+                clearPasswords,
+                clearError,
             }}
         >
             {props.children}
